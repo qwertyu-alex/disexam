@@ -9,8 +9,8 @@ import java.util.ArrayList;
 //TODO: Build this cache and use it.
 public class OrderCache {
 
-    // List of products
-    private ArrayList<Order> products;
+    // List of orders
+    private ArrayList<Order> orders;
 
     // Time cache should live
     private long ttl;
@@ -26,20 +26,20 @@ public class OrderCache {
 
         // If we wish to clear cache, we can set force update.
         // Otherwise we look at the age of the cache and figure out if we should update.
-        // If the list is empty we also check for new products
+        // If the list is empty we also check for new orders
         if (forceUpdate
                 || ((this.created + this.ttl) >= (System.currentTimeMillis() / 1000L))
-                || this.products.isEmpty()) {
+                || this.orders.isEmpty()) {
 
-            // Get products from controller, since we wish to update.
-            ArrayList<Order> products = OrderController.getOrders();
+            // Get orders from controller, since we wish to update.
+            ArrayList<Order> orders = OrderController.getOrders();
 
-            // Set products for the instance and set created timestamp
-            this.products = products;
+            // Set orders for the instance and set created timestamp
+            this.orders = orders;
             this.created = System.currentTimeMillis() / 1000L;
         }
 
         // Return the documents
-        return this.products;
+        return this.orders;
     }
 }
