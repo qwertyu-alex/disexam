@@ -20,6 +20,8 @@ public final class Config {
   private static String SOLR_PATH;
   private static String SOLR_CORE;
   private static long PRODUCT_TTL;
+  private static long ORDER_TTL;
+  private static long USER_TTL;
   private static String ENCR_KEY;
 
   public static long getProductTtl() {
@@ -66,11 +68,19 @@ public final class Config {
     return SOLR_CORE;
   }
 
-    public static String getEncrKey() {
+  public static String getEncrKey() {
         return ENCR_KEY;
-    }
+}
 
-    public static void initializeConfig() throws IOException {
+  public static long getOrderTtl() {
+    return ORDER_TTL;
+  }
+
+  public static long getUserTtl() {
+    return USER_TTL;
+  }
+
+  public static void initializeConfig() throws IOException {
 
     // Init variables to parse JSON
     JsonObject json;
@@ -98,12 +108,18 @@ public final class Config {
     DATABASE_USERNAME = json.get("DATABASE_USERNAME").toString().replace("\"", "");
     DATABASE_PASSWORD = json.get("DATABASE_PASSWORD").toString().replace("\"", "");
     DATABASE_NAME = json.get("DATABASE_NAME").toString().replace("\"", "");
+
     ENCRYPTION = json.get("ENCRYPTION").getAsBoolean();
+    ENCR_KEY = json.get("ENCR_KEY").getAsString().replace("\"", "");
+
     SOLR_HOST = json.get("SOLR_HOST").toString().replace("\"", "");
     SOLR_PORT = Integer.parseInt(json.get("SOLR_PORT").toString().replace("\"", ""));
     SOLR_PATH = json.get("SOLR_PATH").toString().replace("\"", "");
     SOLR_CORE = json.get("SOLR_CORE").toString().replace("\"", "");
+
     PRODUCT_TTL = json.get("PRODUCT_TTL").getAsLong();
-    ENCR_KEY = json.get("ENCR_KEY").getAsString().replace("\"", "");
+    ORDER_TTL = json.get("ORDER_TTL").getAsLong();
+    USER_TTL = json.get("USER_TTL").getAsLong();
+
   }
 }
