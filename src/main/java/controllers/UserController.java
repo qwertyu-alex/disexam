@@ -37,7 +37,8 @@ public class UserController {
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 rs.getString("password"),
-                rs.getString("email"));
+                rs.getString("email"),
+                rs.getString("salt"));
 
         // return the create object
         return user;
@@ -80,7 +81,8 @@ public class UserController {
                 rs.getString("first_name"),
                 rs.getString("last_name"),
                 rs.getString("password"),
-                rs.getString("email"));
+                rs.getString("email"),
+                rs.getString("salt"));
 
         // Add element to list
         users.add(user);
@@ -109,7 +111,7 @@ public class UserController {
     // Insert the user in the DB
     // TODO: Hash the user password before saving it.
     int userID = dbCon.insert(
-        "INSERT INTO user(first_name, last_name, password, email, created_at) VALUES('"
+        "INSERT INTO user(first_name, last_name, password, email, created_at, salt) VALUES('"
             + user.getFirstname()
             + "', '"
             + user.getLastname()
@@ -119,6 +121,8 @@ public class UserController {
             + user.getEmail()
             + "', "
             + user.getCreatedTime()
+            + "', "
+            + user.getSalt()
             + ")");
 
     if (userID != 0) {
