@@ -210,4 +210,22 @@ public class UserController {
     //if no existing user
     return null;
   }
+
+  public static boolean deleteUser (User user){
+    // Check for DB Connection
+    if (dbCon == null) {
+      dbCon = new DatabaseController();
+    }
+
+    try {
+      dbCon.update("DELETE FROM user where id = " + user.getId());
+    } catch (SQLException err) {
+      err.printStackTrace();
+      return false;
+    }
+
+    return true;
+
+  }
+
 }
