@@ -3,7 +3,10 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Random;
+
 import model.User;
+import utils.Hashing;
 import utils.Log;
 
 public class UserController {
@@ -108,8 +111,14 @@ public class UserController {
       dbCon = new DatabaseController();
     }
 
+    //Add server side salt to the client side salt
+    user.setSalt(user.getSalt() + new Random().nextDouble());
+
+    //Hash the password with md5
+    user.setPassword(Hashing.md5(user.getPassword(), user.getSalt()));
+
     // Insert the user in the DB
-    // TODO: Hash the user password before saving it.
+    // TODO: Hash the user password before saving it. DONE
     int userID = dbCon.insert(
         "INSERT INTO user(first_name, last_name, password, email, created_at, salt) VALUES('"
             + user.getFirstname()
@@ -119,11 +128,11 @@ public class UserController {
             + user.getPassword()
             + "', '"
             + user.getEmail()
-            + "', "
+            + "', '"
             + user.getCreatedTime()
-            + "', "
+            + "', '"
             + user.getSalt()
-            + ")");
+            + "')");
 
     if (userID != 0) {
       //Update the userid of the user before returning
