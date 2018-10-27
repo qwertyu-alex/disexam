@@ -110,4 +110,24 @@ public class DatabaseController {
     // Return the resultset which at this point will be null
     return result;
   }
+
+
+  /**
+   * A method which sends an update to the database.
+   * @param sql Takes in sql statements as a string
+   * @throws SQLException if anything happens sends an SQLException object to the caller
+   */
+  public void update (String sql) throws SQLException{
+
+    // Check if we have a connection
+    if (connection == null)
+      connection = getConnection();
+
+      // Build the statement as a prepared statement
+      PreparedStatement stmt = connection.prepareStatement(sql);
+
+      // Actually fire the query to the DB
+      stmt.executeUpdate();
+
+  }
 }

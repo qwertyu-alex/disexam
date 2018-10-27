@@ -78,14 +78,26 @@ public class UserEndpoints {
     }
   }
 
-  // TODO: Make the system able to login users and assign them a token to use throughout the system.
+  // TODO: Make the system able to login users and assign them a token to use throughout the system. DONE
   @POST
   @Path("/login")
   @Consumes(MediaType.APPLICATION_JSON)
   public Response loginUser(String x) {
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
+    // Read the json from body and transfer it to a user class
+    User newUser = new Gson().fromJson(x, User.class);
+
+    String authToken = UserController.authenticateUser(newUser);
+
+    if (authToken != null){
+      newUser.setAuthToken(authToken);
+      String json = new Gson().toJson(newUser);
+
+      // Return a response with status 200 and JSON as type
+      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+    } else {
+      return Response.status(401).entity("Unathorized access").build();
+    }
   }
 
   // TODO: Make the system able to delete users

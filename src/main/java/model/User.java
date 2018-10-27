@@ -9,6 +9,7 @@ public class User {
   private String password;
   private long createdTime;
   private String salt;
+  private String authToken;
 
   public User(){}
 
@@ -75,5 +76,13 @@ public class User {
 
   public void setSalt(String salt) {
     this.salt = salt;
+  }
+
+  public String getAuthToken() {
+    return authToken;
+  }
+
+  public void setAuthToken(String authToken) {
+    this.authToken = authToken;
   }
 }

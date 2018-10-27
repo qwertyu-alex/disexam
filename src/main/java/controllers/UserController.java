@@ -3,6 +3,7 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 import model.User;
@@ -144,5 +145,69 @@ public class UserController {
 
     // Return user
     return user;
+  }
+
+  public static String authenticateUser (User user){
+    String salt = "";
+    int id = 0;
+    String newAuthToken = "";
+
+
+    // Check for DB Connection
+    if (dbCon == null) {
+      dbCon = new DatabaseController();
+    }
+
+    //Check if authToken is active and valid
+    if (user.getAuthToken() != null){
+      try {
+        ResultSet res = dbCon.query("SELECT * FROM user WHERE authToken = \'" + user.getAuthToken() + "\'");
+        if (res.next()){
+          System.out.println(res.getString("authToken"));
+          return res.getString("authToken");
+        }
+      } catch (SQLException err){
+        err.printStackTrace();
+      }
+    }
+
+    //Retrieve salt
+    try{
+      ResultSet res = dbCon.query("SELECT salt FROM user WHERE email = \'" + user.getEmail() + "\'");
+      if (res.next()){
+        salt = res.getString("salt");
+      } else {
+        //return null if email does not exist
+        return null;
+      }
+    } catch (SQLException err){
+      err.printStackTrace();
+    }
+
+    //Authenticate email and password
+    try {
+      ResultSet res = dbCon.query("SELECT id FROM user WHERE " +
+              "email = " + "\'" + user.getEmail() + "\' " +
+              "AND password = " + "\'" + Hashing.md5(user.getPassword(), salt) + "\'" );
+      if (res.next()){
+        id = res.getInt("id");
+      }
+    } catch (SQLException err){
+      err.printStackTrace();
+    }
+
+    //Generate new authToken from current date and a random double
+    newAuthToken = Hashing.sha(new Date().toString(), Double.toString(new Random().nextDouble()));
+    try {
+      dbCon.update("UPDATE user SET " +
+              "authtoken = \'" + newAuthToken + "\' " +
+              "WHERE id = \'" + id + "\'");
+      return newAuthToken;
+    } catch (SQLException err){
+      err.printStackTrace();
+    }
+
+    //if no existing user
+    return null;
   }
 }
