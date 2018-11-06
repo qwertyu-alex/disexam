@@ -235,6 +235,8 @@ public class UserController {
   }
 
   public static boolean updateUser (User user){
+
+    return true;
   }
 
 }
