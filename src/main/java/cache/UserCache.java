@@ -6,7 +6,7 @@ import utils.Config;
 
 import java.util.ArrayList;
 
-//TODO: Build this cache and use it.
+//TODO: Build this cache and use it. DONE
 public class UserCache {
 
   // List of users
@@ -37,6 +37,17 @@ public class UserCache {
 
     // Return the documents
     return users;
+  }
+
+  public static void updateCache(){
+    ttl = Config.getUserTtl();
+
+    // Get users from controller, since we wish to update.
+    users = UserController.getUsers();
+
+    // Set created timestamp
+    created = System.currentTimeMillis() / 1000L;
+    System.out.println("Updating User Cache");
   }
 
 }

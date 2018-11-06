@@ -119,7 +119,14 @@ public class UserEndpoints {
   }
 
   // TODO: Make the system able to update users
+  @POST
+  @Path("/update")
+  @Consumes(MediaType.APPLICATION_JSON)
   public Response updateUser(String x) {
+
+    User user = new Gson().fromJson(x, User.class);
+
+
 
     // Return a response with status 200 and JSON as type
     return Response.status(400).entity("Endpoint not implemented yet").build();

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Random;
 
+import cache.UserCache;
 import model.User;
 import utils.Hashing;
 import utils.Log;
@@ -161,9 +162,8 @@ public class UserController {
     //Check if authToken is active and valid
     if (user.getAuthToken() != null){
       try {
-        ResultSet res = dbCon.query("SELECT * FROM user WHERE authToken = \'" + user.getAuthToken() + "\'");
+        ResultSet res = dbCon.query("SELECT * FROM user WHERE authToken = \'" + user.getAuthToken() + "\' AND email = \'" + user.getEmail() + "\'");
         if (res.next()){
-          System.out.println(res.getString("authToken"));
           return res.getString("authToken");
         }
       } catch (SQLException err){
@@ -218,7 +218,13 @@ public class UserController {
     }
 
     try {
-      dbCon.update("DELETE FROM user where id = " + user.getId());
+      ResultSet res = dbCon.query("SELECT id FROM user where id = " + user.getId());
+      if (res.next()){
+        dbCon.update("DELETE FROM user where id = " + user.getId());
+        UserCache.updateCache();
+      } else {
+        return false;
+      }
     } catch (SQLException err) {
       err.printStackTrace();
       return false;
@@ -226,6 +232,9 @@ public class UserController {
 
     return true;
 
+  }
+
+  public static boolean updateUser (User user){
   }
 
 }
