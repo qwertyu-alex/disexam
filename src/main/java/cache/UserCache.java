@@ -9,39 +9,34 @@ import java.util.ArrayList;
 //TODO: Build this cache and use it.
 public class UserCache {
 
-
   // List of users
-  private ArrayList<User> users;
+  private static ArrayList<User> users = new ArrayList<>();
 
   // Time cache should live
-  private long ttl;
+  private static long ttl;
 
   // Sets when the cache has been created
-  private long created;
+  private static long created;
 
-  public UserCache() {
-    this.ttl = Config.getUserTtl();
-  }
-
-  public ArrayList<User> getUsers(Boolean forceUpdate) {
-
+  public static ArrayList<User> getUsers(Boolean forceUpdate) {
+    ttl = Config.getUserTtl();
     // If we wish to clear cache, we can set force update.
     // Otherwise we look at the age of the cache and figure out if we should update.
     // If the list is empty we also check for new users
     if (forceUpdate
-            || ((this.created + this.ttl) >= (System.currentTimeMillis() / 1000L))
-            || this.users.isEmpty()) {
+            || ((created + ttl) <= (System.currentTimeMillis() / 1000L))
+            || users.isEmpty()) {
 
       // Get users from controller, since we wish to update.
-      ArrayList<User> users = UserController.getUsers();
+      users = UserController.getUsers();
 
-      // Set users for the instance and set created timestamp
-      this.users = users;
-      this.created = System.currentTimeMillis() / 1000L;
+      // Set created timestamp
+      created = System.currentTimeMillis() / 1000L;
+      System.out.println("Updating User Cache");
     }
 
     // Return the documents
-    return this.users;
+    return users;
   }
 
 }

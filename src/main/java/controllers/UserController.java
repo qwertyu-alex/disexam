@@ -207,7 +207,7 @@ public class UserController {
       err.printStackTrace();
     }
 
-    //if no existing user
+    //If there are no existing users matching
     return null;
   }
 
