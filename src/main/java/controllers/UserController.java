@@ -102,9 +102,6 @@ public class UserController {
 
   public static User createUser(User user) {
 
-    // Write in log that we've reach this step
-    Log.writeLog(UserController.class.getName(), user, "Actually creating a user in DB", 0);
-
     // Set creation time for user.
     user.setCreatedTime(System.currentTimeMillis() / 1000L);
 
@@ -139,6 +136,9 @@ public class UserController {
     if (userID != 0) {
       //Update the userid of the user before returning
       user.setId(userID);
+
+      // Write in log that we've reach this step
+      Log.writeLog(UserController.class.getName(), user, "Actually creating a user in DB", 0);
     } else{
       // Return null if user has not been inserted into database
       return null;
@@ -235,6 +235,46 @@ public class UserController {
   }
 
   public static boolean updateUser (User user){
+    String query = "";
+
+
+    // Check for DB Connection
+    if (dbCon == null) {
+      dbCon = new DatabaseController();
+    }
+
+    try {
+      ResultSet res = dbCon.query("SELECT id FROM user where id = " + user.getId());
+      if (res.next()){
+
+        query += "UPDATE user SET";
+
+        if (user.getFirstname() != null && !user.getFirstname().isEmpty()) {
+          query += " first_name = \'" + user.getFirstname() + "\',";
+        }
+
+        if (user.getLastname() != null && !user.getLastname().isEmpty()) {
+          query += " last_name = \'" + user.getLastname() + "\',";
+        }
+
+        if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+          query += " email = \'" + user.getEmail() + "\',";
+        }
+
+        //We should always expect a comma at the end. Therefore we delete the last comma.
+        query = query.substring(0, query.length() - 1);
+
+        query += " WHERE id = " + user.getId();
+
+        System.out.println(query);
+        dbCon.update(query);
+
+      } else {
+        return false;
+      }
+    } catch (SQLException err){
+      err.printStackTrace();
+    }
 
     return true;
   }

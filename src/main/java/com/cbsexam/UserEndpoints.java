@@ -73,9 +73,9 @@ public class UserEndpoints {
     // Return the data to the user
     if (createUser != null) {
       // Return a response with status 200 and JSON as type
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+      return Response.status(201).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {
-      return Response.status(400).entity("Could not create user").build();
+      return Response.status(400).entity("Email already exists").build();
     }
   }
 
@@ -126,9 +126,13 @@ public class UserEndpoints {
 
     User user = new Gson().fromJson(x, User.class);
 
+    if (UserController.updateUser(user)){
+      // Return a response with status 200 and JSON as type
+      return Response.status(200).entity("User updated").build();
+    } else {
+      return Response.status(400).entity("User not found").build();
+    }
 
 
-    // Return a response with status 200 and JSON as type
-    return Response.status(400).entity("Endpoint not implemented yet").build();
   }
 }
