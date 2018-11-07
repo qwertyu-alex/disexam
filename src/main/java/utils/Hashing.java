@@ -7,7 +7,7 @@ import org.bouncycastle.util.encoders.Hex;
 
 public final class Hashing {
 
-  // TODO: You should add a salt and make this secure
+  // TODO: You should add a salt and make this secure DONE
   public static String md5(String rawString, String salt) {
     try {
 
@@ -40,7 +40,7 @@ public final class Hashing {
     return null;
   }
 
-  // TODO: You should add a salt and make this secure
+  // TODO: You should add a salt and make this secure DONE
   public static String sha(String rawString, String salt) {
     try {
       // We load the hashing algoritm we wish to use.

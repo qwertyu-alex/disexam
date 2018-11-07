@@ -31,7 +31,7 @@ public class ProductEndpoints {
     String json = new Gson().toJson(product);
 
     // Return a response with status 200 and JSON as type
-    return Response.status(200).type(MediaType.TEXT_PLAIN_TYPE).entity(json).build();
+    return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
   }
 
   /** @return Responses */
@@ -47,7 +47,7 @@ public class ProductEndpoints {
     String json = new Gson().toJson(products);
 
     // Return a response with status 200 and JSON as type
-    return Response.status(200).type(MediaType.TEXT_PLAIN_TYPE).entity(json).build();
+    return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
   }
 
   @POST
