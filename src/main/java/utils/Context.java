@@ -13,10 +13,11 @@ public class Context implements ServletContextListener {
     // We init config in order to read the file and set all the variables.
     try {
       Config.initializeConfig();
+      Log.writeLog(this.getClass().getName(), this, "We are now including the config file", 2);
+
     } catch (IOException e) {
 
       System.out.println("Can't read config");
-      Log.writeLog(this.getClass().getName(), this, "We are now including the config file", 2);
 
       e.printStackTrace();
     }
