@@ -138,3 +138,4 @@ buildNumber.properties
 src/main/resources/config.json
 src\main\resources\config.json
 src/main/java/utils/TestMain.java
+config.json

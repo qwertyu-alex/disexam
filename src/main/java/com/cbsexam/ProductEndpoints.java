@@ -28,7 +28,6 @@ public class ProductEndpoints {
     // Call our controller-layer in order to get the order from the DB
     Product product = ProductController.getProduct(idProduct);
 
-    // TODO: Add Encryption to JSON DONE
     // We convert the java object to json with GSON library imported in Maven
     String json = Encryption.encryptDecryptXOR(new Gson().toJson(product));
 
@@ -44,7 +43,6 @@ public class ProductEndpoints {
     // Call our controller-layer in order to get the order from the DB
     ArrayList<Product> products = ProductCache.getProducts(false);
 
-    // TODO: Add Encryption to JSON DONE
     // We convert the java object to json with GSON library imported in Maven
     String json = Encryption.encryptDecryptXOR(new Gson().toJson(products));
 
@@ -63,15 +61,12 @@ public class ProductEndpoints {
     // Use the controller to add the user
     Product createdProduct = ProductController.createProduct(newProduct);
 
-    // Get the user back with the added ID and return it to the user
-    String json = Encryption.encryptDecryptXOR(new Gson().toJson(createdProduct));
-
     // Return the data to the user
     if (createdProduct != null) {
       // Return a response with status 200 and JSON as type
-      return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
+      return Response.status(200).entity("Product is created").build();
     } else {
-      return Response.status(400).entity("Could not create user").build();
+      return Response.status(400).entity("Could not create product. SKU has to be unique").build();
     }
   }
 }

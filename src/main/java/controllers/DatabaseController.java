@@ -90,6 +90,8 @@ public class DatabaseController {
     if (connection == null)
       connection = getConnection();
 
+    System.out.println(sql);
+
     try {
       // Build the statement up in a safe way
       PreparedStatement statement =

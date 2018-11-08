@@ -38,12 +38,13 @@ public class ProductController {
                 rs.getString("sku"),
                 rs.getFloat("price"),
                 rs.getString("description"),
-                rs.getInt("stock"));
+                rs.getInt("stock"),
+                rs.getInt("created_at"));
 
         // Return the product
         return product;
       } else {
-        System.out.println("No user found");
+        System.out.println("No product found");
       }
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
@@ -73,11 +74,12 @@ public class ProductController {
                 rs.getString("sku"),
                 rs.getFloat("price"),
                 rs.getString("description"),
-                rs.getInt("stock"));
+                rs.getInt("stock"),
+                rs.getInt("created_at"));
 
         return product;
       } else {
-        System.out.println("No user found");
+        System.out.println("No product found");
       }
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
@@ -97,7 +99,6 @@ public class ProductController {
       dbCon = new DatabaseController();
     }
 
-    // TODO: Use caching layer.
     String sql = "SELECT * FROM product";
 
     ResultSet rs = dbCon.query(sql);
@@ -112,7 +113,8 @@ public class ProductController {
                 rs.getString("sku"),
                 rs.getFloat("price"),
                 rs.getString("description"),
-                rs.getInt("stock"));
+                rs.getInt("stock"),
+                rs.getInt("created_at"));
 
         products.add(product);
       }
@@ -125,9 +127,6 @@ public class ProductController {
 
   public static Product createProduct(Product product) {
 
-    // Write in log that we've reach this step
-    Log.writeLog(ProductController.class.getName(), product, "Actually creating a product in DB", 0);
-
     // Set creation time for product.
     product.setCreatedTime(System.currentTimeMillis() / 1000L);
 
@@ -138,23 +137,27 @@ public class ProductController {
 
     // Insert the product in the DB
     int productID = dbCon.insert(
-        "INSERT INTO product(product_name, sku, price, description, stock, created_at) VALUES('"
+        "INSERT INTO product (product_name, sku, price, description, stock, created_at) VALUES('"
             + product.getName()
             + "', '"
             + product.getSku()
-            + "', '"
+            + "', "
             + product.getPrice()
-            + "', '"
+            + ", '"
             + product.getDescription()
             + "', "
             + product.getStock()
-            + "', "
+            + ", "
             + product.getCreatedTime()
             + ")");
 
     if (productID != 0) {
       //Update the productid of the product before returning
       product.setId(productID);
+
+      // Write in log that we've reached this step
+      Log.writeLog(ProductController.class.getName(), product, "Actually creating a product in DB", 0);
+
     } else{
       // Return null if product has not been inserted into database
       return null;
