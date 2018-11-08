@@ -12,6 +12,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.User;
+import utils.Encryption;
 import utils.Log;
 
 @Path("user")
@@ -30,7 +31,7 @@ public class UserEndpoints {
 
     // TODO: Add Encryption to JSON
     // Convert the user object to json in order to return the object
-    String json = new Gson().toJson(user);
+    String json = Encryption.encryptDecryptXOR(new Gson().toJson(user));
 
     // Return the user with the status code 200
     // TODO: What should happen if something breaks down?
@@ -50,7 +51,7 @@ public class UserEndpoints {
 
     // TODO: Add Encryption to JSON
     // Transfer users to json in order to return it to the user
-    String json = new Gson().toJson(users);
+    String json = Encryption.encryptDecryptXOR(new Gson().toJson(users));
 
     // Return the users with the status code 200
     return Response.status(200).type(MediaType.APPLICATION_JSON).entity(json).build();
@@ -68,7 +69,7 @@ public class UserEndpoints {
     User createUser = UserController.createUser(newUser);
 
     // Get the user back with the added ID and return it to the user
-    String json = new Gson().toJson(createUser);
+    String json = Encryption.encryptDecryptXOR(new Gson().toJson(createUser));
 
     // Return the data to the user
     if (createUser != null) {
@@ -92,7 +93,8 @@ public class UserEndpoints {
 
     if (authToken != null){
       newUser.setAuthToken(authToken);
-      String json = new Gson().toJson(newUser);
+
+      String json = Encryption.encryptDecryptXOR(new Gson().toJson(newUser));
 
       // Return a response with status 200 and JSON as type
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
@@ -132,7 +134,5 @@ public class UserEndpoints {
     } else {
       return Response.status(400).entity("User not found").build();
     }
-
-
   }
 }

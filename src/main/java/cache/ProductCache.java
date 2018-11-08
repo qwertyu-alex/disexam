@@ -8,36 +8,38 @@ import utils.Config;
 public class ProductCache {
 
   // List of products
-  private ArrayList<Product> products;
+  private static ArrayList<Product> products;
 
   // Time cache should live
-  private long ttl;
+  private static long ttl;
 
   // Sets when the cache has been created
-  private long created;
+  private static long created;
 
-  public ProductCache() {
-    this.ttl = Config.getProductTtl();
-  }
+  public static ArrayList<Product> getProducts(Boolean forceUpdate) {
 
-  public ArrayList<Product> getProducts(Boolean forceUpdate) {
+    //If cache is disabled -> get data from database
+    if (!Config.getCache()){
+      return ProductController.getProducts();
+    }
 
+    ttl = Config.getProductTtl();
     // If we wish to clear cache, we can set force update.
     // Otherwise we look at the age of the cache and figure out if we should update.
     // If the list is empty we also check for new products
     if (forceUpdate
-        || ((this.created + this.ttl) >= (System.currentTimeMillis() / 1000L))
-        || this.products.isEmpty()) {
+        || ((created + ttl) <= (System.currentTimeMillis() / 1000L))
+        || products.isEmpty()) {
+      System.out.println("Updating Product Cache");
 
       // Get products from controller, since we wish to update.
-      ArrayList<Product> products = ProductController.getProducts();
+      products = ProductController.getProducts();
 
       // Set products for the instance and set created timestamp
-      this.products = products;
-      this.created = System.currentTimeMillis() / 1000L;
+      created = System.currentTimeMillis() / 1000L;
     }
 
     // Return the documents
-    return this.products;
+    return products;
   }
 }

@@ -19,6 +19,12 @@ public class UserCache {
   private static long created;
 
   public static ArrayList<User> getUsers(Boolean forceUpdate) {
+
+    //If cache is disabled -> get data from database
+    if (!Config.getCache()){
+      return UserController.getUsers();
+    }
+
     ttl = Config.getUserTtl();
     // If we wish to clear cache, we can set force update.
     // Otherwise we look at the age of the cache and figure out if we should update.
@@ -26,13 +32,13 @@ public class UserCache {
     if (forceUpdate
             || ((created + ttl) <= (System.currentTimeMillis() / 1000L))
             || users.isEmpty()) {
+      System.out.println("Updating User Cache");
 
       // Get users from controller, since we wish to update.
       users = UserController.getUsers();
 
       // Set created timestamp
       created = System.currentTimeMillis() / 1000L;
-      System.out.println("Updating User Cache");
     }
 
     // Return the documents
