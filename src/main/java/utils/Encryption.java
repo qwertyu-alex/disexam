@@ -16,10 +16,15 @@ public final class Encryption {
     // If encryption is enabled in Config.
     if (Config.getEncryption()) {
 
+      //Change the keys depending on the length of the rawString
+      String keyMod = Integer.toString(rawString.length() % 11);
+      String keyMod2 = Integer.toString(rawString.length() % 3);
+      System.out.println(keyMod);
+
       // The key is predefined and hidden in code
       // TODO: Create a more complex code and store it somewhere better DONE
-      char[] key = Config.getEncrKey().toCharArray();
-      char[] key2 = Config.getEncrKey2().toCharArray();
+      char[] key = (keyMod + Config.getEncrKey()).toCharArray();
+      char[] key2 = (keyMod2 + Config.getEncrKey2()).toCharArray();
 
       // Stringbuilder enables you to play around with strings and make useful stuff
       StringBuilder thisIsEncrypted = new StringBuilder();

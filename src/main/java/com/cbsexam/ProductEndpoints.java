@@ -48,8 +48,6 @@ public class ProductEndpoints {
     // We convert the java object to json with GSON library imported in Maven
     String json = Encryption.encryptDecryptXOR(new Gson().toJson(products));
 
-    System.out.println(json);
-
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
   }
