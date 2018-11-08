@@ -11,6 +11,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import model.Product;
+import utils.Encryption;
 
 @Path("product")
 public class ProductEndpoints {
@@ -26,9 +27,9 @@ public class ProductEndpoints {
     // Call our controller-layer in order to get the order from the DB
     Product product = ProductController.getProduct(idProduct);
 
-    // TODO: Add Encryption to JSON
+    // TODO: Add Encryption to JSON DONE
     // We convert the java object to json with GSON library imported in Maven
-    String json = new Gson().toJson(product);
+    String json = Encryption.encryptDecryptXOR(new Gson().toJson(product));
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
@@ -42,9 +43,13 @@ public class ProductEndpoints {
     // Call our controller-layer in order to get the order from the DB
     ArrayList<Product> products = ProductController.getProducts();
 
-    // TODO: Add Encryption to JSON
+    // TODO: Add Encryption to JSON DONE
     // We convert the java object to json with GSON library imported in Maven
-    String json = new Gson().toJson(products);
+
+
+    String json = Encryption.encryptDecryptXOR(new Gson().toJson(products));
+
+    System.out.println(Encryption.encryptDecryptXOR("json"));
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
@@ -62,7 +67,7 @@ public class ProductEndpoints {
     Product createdProduct = ProductController.createProduct(newProduct);
 
     // Get the user back with the added ID and return it to the user
-    String json = new Gson().toJson(createdProduct);
+    String json = Encryption.encryptDecryptXOR(new Gson().toJson(createdProduct));
 
     // Return the data to the user
     if (createdProduct != null) {

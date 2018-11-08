@@ -23,6 +23,7 @@ public final class Config {
   private static long ORDER_TTL;
   private static long USER_TTL;
   private static String ENCR_KEY;
+  private static String ENCR_KEY2;
 
   public static long getProductTtl() {
     return PRODUCT_TTL;
@@ -72,6 +73,8 @@ public final class Config {
         return ENCR_KEY;
 }
 
+  public static String getEncrKey2() { return  ENCR_KEY2; }
+
   public static long getOrderTtl() {
     return ORDER_TTL;
   }
@@ -111,6 +114,7 @@ public final class Config {
 
     ENCRYPTION = json.get("ENCRYPTION").getAsBoolean();
     ENCR_KEY = json.get("ENCR_KEY").getAsString().replace("\"", "");
+    ENCR_KEY2 = json.get("ENCR_KEY2").getAsString().replace("\"", "");
 
     SOLR_HOST = json.get("SOLR_HOST").toString().replace("\"", "");
     SOLR_PORT = Integer.parseInt(json.get("SOLR_PORT").toString().replace("\"", ""));
