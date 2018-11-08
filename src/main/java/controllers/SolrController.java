@@ -54,7 +54,7 @@ public final class SolrController {
 
     // Search in Solr base on Field and Value
     SolrQuery query = new SolrQuery();
-    query.set("q", field + ":" + value);
+    query.set("q", field + ": \"" + value + "\"");
 
     // Create an empty document list
     SolrDocumentList docList = new SolrDocumentList();

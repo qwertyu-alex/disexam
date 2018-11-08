@@ -13,7 +13,7 @@ public class UserCache {
   private static ArrayList<User> users = new ArrayList<>();
 
   // Time cache should live
-  private static long ttl;
+  private static long ttl = Config.getUserTtl();
 
   // Sets when the cache has been created
   private static long created;
@@ -25,7 +25,6 @@ public class UserCache {
       return UserController.getUsers();
     }
 
-    ttl = Config.getUserTtl();
     // If we wish to clear cache, we can set force update.
     // Otherwise we look at the age of the cache and figure out if we should update.
     // If the list is empty we also check for new users

@@ -22,9 +22,11 @@ public final class Config {
   private static long PRODUCT_TTL;
   private static long ORDER_TTL;
   private static long USER_TTL;
+  private static long REVIEW_TTL;
   private static String ENCR_KEY;
   private static String ENCR_KEY2;
   private static boolean CACHE;
+
 
   public static long getProductTtl() {
     return PRODUCT_TTL;
@@ -84,6 +86,8 @@ public final class Config {
     return USER_TTL;
   }
 
+  public static long getReviewTtl() { return REVIEW_TTL;}
+
   public static boolean getCache() {
     return CACHE;
   }
@@ -129,6 +133,7 @@ public final class Config {
     PRODUCT_TTL = json.get("PRODUCT_TTL").getAsLong();
     ORDER_TTL = json.get("ORDER_TTL").getAsLong();
     USER_TTL = json.get("USER_TTL").getAsLong();
+    REVIEW_TTL = json.get("REVIEW_TTL").getAsLong();
 
     CACHE = json.get("CACHE").getAsBoolean();
 
