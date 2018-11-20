@@ -3,11 +3,17 @@ package utils;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.bouncycastle.util.encoders.Hex;
 
 public final class Hashing {
 
-  // TODO: You should add a salt and make this secure DONE
   public static String md5(String rawString, String salt) {
     try {
 
@@ -40,7 +46,6 @@ public final class Hashing {
     return null;
   }
 
-  // TODO: You should add a salt and make this secure DONE
   public static String sha(String rawString, String salt) {
     try {
       // We load the hashing algoritm we wish to use.
@@ -63,5 +68,53 @@ public final class Hashing {
     }
 
     return rawString;
+  }
+
+  /**
+   * Failled attempts
+   */
+
+  //TODO: DELETE OR MAKE JWT
+  public static String encryptJSON(String key){
+
+    try {
+      Algorithm algorithm = Algorithm.HMAC256(key);
+      String token = JWT.create()
+              .withIssuer("auth0")
+              .withSubject("email")
+              .withClaim("THISCLAIM", "CLAIM")
+              .sign(algorithm);
+
+
+      return token;
+    } catch (JWTCreationException err){
+      err.printStackTrace();
+    }
+
+    return "token";
+  }
+
+  public static DecodedJWT verifier(String token, String key){
+    try {
+      Algorithm algorithm = Algorithm.HMAC256(key);
+
+      JWTVerifier verifier = JWT.require(algorithm).withIssuer("auth0").build();
+
+      DecodedJWT jwt = verifier.verify(token);
+
+
+      return jwt;
+
+      //https://github.com/auth0/java-jwt
+      //https://github.com/jwtk/jjwt#overview
+      //https://en.wikipedia.org/wiki/JSON_Web_Token
+      //https://github.com/auth0-samples/auth0-servlet-sample/tree/master/01-Login
+      //https://manage.auth0.com/#/applications/DAM2Q8c2y1b1W1m5B87DV9JgvCGBu6ti/quickstart
+
+    } catch (JWTVerificationException err){
+      err.printStackTrace();
+    }
+    return null;
+
   }
 }

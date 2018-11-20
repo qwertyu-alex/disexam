@@ -117,7 +117,6 @@ public class UserController {
     user.setPassword(Hashing.md5(user.getPassword(), user.getSalt()));
 
     // Insert the user in the DB
-    // TODO: Hash the user password before saving it. DONE
     int userID = dbCon.insert(
         "INSERT INTO user(first_name, last_name, password, email, created_at, salt) VALUES('"
             + user.getFirstname()

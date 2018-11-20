@@ -29,7 +29,6 @@ public class UserEndpoints {
     // Use the ID to get the user from the controller.
     User user = UserController.getUser(idUser);
 
-    // TODO: Add Encryption to JSON
     // Convert the user object to json in order to return the object
     String json = Encryption.encryptDecryptXOR(new Gson().toJson(user));
 
@@ -49,7 +48,6 @@ public class UserEndpoints {
     // Get a list of users
     ArrayList<User> users = UserCache.getUsers(false);
 
-    // TODO: Add Encryption to JSON
     // Transfer users to json in order to return it to the user
     String json = Encryption.encryptDecryptXOR(new Gson().toJson(users));
 
@@ -103,7 +101,11 @@ public class UserEndpoints {
     }
   }
 
-  // TODO: Make the system able to delete users
+  /**
+   *
+   * @param x a json string that cointains an ID for a user.
+   * @return
+   */
   @POST
   @Path("/delete")
   @Consumes(MediaType.APPLICATION_JSON)
@@ -120,7 +122,11 @@ public class UserEndpoints {
     }
   }
 
-  // TODO: Make the system able to update users
+  /**
+   *
+   * @param x is some json with a user object. Not all of the attributes must be filled out but ID must be defined.
+   * @return
+   */
   @POST
   @Path("/update")
   @Consumes(MediaType.APPLICATION_JSON)

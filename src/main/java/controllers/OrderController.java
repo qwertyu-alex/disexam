@@ -136,6 +136,16 @@ public class OrderController {
     order.setCustomer(UserController.createUser(order.getCustomer()));
 
     // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts.
+    if (order.getCustomer().getId() != 0
+            || order.getBillingAddress().getId() != 0
+            || order.getShippingAddress().getId() != 0
+            || order.calculateOrderTotal() != 0
+            || order.getCreatedAt() != 0
+            || order.getUpdatedAt() != 0){
+      return null;
+    }
+
+
 
     // Insert the product in the DB
     int orderID = dbCon.insert(
