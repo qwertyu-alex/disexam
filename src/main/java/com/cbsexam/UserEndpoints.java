@@ -29,11 +29,15 @@ public class UserEndpoints {
     // Use the ID to get the user from the controller.
     User user = UserController.getUser(idUser);
 
+    //If the user wasn't found
+    if  (user == null){
+      return Response.status(400).entity("User not found").build();
+    }
+
     // Convert the user object to json in order to return the object
     String json = Encryption.encryptDecryptXOR(new Gson().toJson(user));
 
     // Return the user with the status code 200
-    // TODO: What should happen if something breaks down?
     return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
   }
 
@@ -87,9 +91,12 @@ public class UserEndpoints {
     // Read the json from body and transfer it to a user class
     User newUser = new Gson().fromJson(x, User.class);
 
+    //Generate or find an authToken - this returns a token if the user has provided valid credentials and authentication
     String authToken = UserController.authenticateUser(newUser);
 
+
     if (authToken != null){
+      //
       newUser.setAuthToken(authToken);
 
       String json = Encryption.encryptDecryptXOR(new Gson().toJson(newUser));

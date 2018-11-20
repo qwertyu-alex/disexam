@@ -69,7 +69,7 @@ public class OrderEndpoints {
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {
       // Return a response with status 400 and a message in text
-      return Response.status(400).entity("Could not create order").build();
+      return Response.status(400).entity("Could not create order - missing parameters").build();
     }
   }
 }
