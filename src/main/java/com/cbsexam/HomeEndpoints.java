@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import controllers.OrderController;
 import model.Order;
 import utils.Encryption;
+import utils.HTMLReader;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,6 +22,14 @@ public class HomeEndpoints {
     String html = "<HTML><HEAD><TITLE>Hello</TITLE></HEAD><BODY><form action=\"/user\">\n" +
             "    <input type=\"submit\" value=\"Go to Google\" />\n" +
             "</form></BODY></HTML>";
+
+    try {
+      html = HTMLReader.readFromHTML();
+    } catch (Exception err){
+      err.getStackTrace();
+    }
+
+    System.out.println(html);
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.TEXT_HTML_TYPE).entity(html).build();
