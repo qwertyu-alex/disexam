@@ -1,6 +1,7 @@
 package cache;
 
 import controllers.OrderController;
+import controllers.UserController;
 import model.Order;
 import utils.Config;
 
@@ -10,36 +11,37 @@ import java.util.ArrayList;
 public class OrderCache {
 
     // List of orders
-    private ArrayList<Order> orders;
+    static private ArrayList<Order> orders = new ArrayList<>();
 
     // Time cache should live
-    private long ttl;
+    static private long ttl = Config.getOrderTtl();
 
     // Sets when the cache has been created
-    private long created;
+    static private long created;
 
-    public OrderCache() {
-        this.ttl = Config.getOrderTtl();
-    }
+    static public ArrayList<Order> getOrders(Boolean forceUpdate) {
 
-    public ArrayList<Order> getOrders(Boolean forceUpdate) {
+        //If cache is disabled -> get data from database
+        if (!Config.getCache()){
+            return OrderController.getOrders();
+        }
+
 
         // If we wish to clear cache, we can set force update.
         // Otherwise we look at the age of the cache and figure out if we should update.
         // If the list is empty we also check for new orders
         if (forceUpdate
-                || ((this.created + this.ttl) >= (System.currentTimeMillis() / 1000L))
-                || this.orders.isEmpty()) {
-
+                || ((created + ttl) >= (System.currentTimeMillis() / 1000L))
+                || orders.isEmpty()) {
+            System.out.println("Updating Order Cache");
             // Get orders from controller, since we wish to update.
-            ArrayList<Order> orders = OrderController.getOrders();
+            orders = OrderController.getOrders();
 
             // Set orders for the instance and set created timestamp
-            this.orders = orders;
-            this.created = System.currentTimeMillis() / 1000L;
+            created = System.currentTimeMillis() / 1000L;
         }
 
         // Return the documents
-        return this.orders;
+        return orders;
     }
 }

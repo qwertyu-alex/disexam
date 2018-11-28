@@ -6,7 +6,6 @@ import utils.Config;
 
 import java.util.ArrayList;
 
-//TODO: Build this cache and use it. DONE
 public class UserCache {
 
   // List of users

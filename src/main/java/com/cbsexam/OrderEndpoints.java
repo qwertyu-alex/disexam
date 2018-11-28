@@ -1,5 +1,6 @@
 package com.cbsexam;
 
+import cache.OrderCache;
 import com.google.gson.Gson;
 import controllers.OrderController;
 import java.util.ArrayList;
@@ -27,6 +28,10 @@ public class OrderEndpoints {
     // Call our controller-layer in order to get the order from the DB
     Order order = OrderController.getOrder(idOrder);
 
+    if (order == null){
+      return Response.status(400).type(MediaType.TEXT_PLAIN).entity("No such order").build();
+    }
+
     // We convert the java object to json with GSON library imported in Maven
     String json = Encryption.encryptDecryptXOR(new Gson().toJson(order));
 
@@ -40,7 +45,11 @@ public class OrderEndpoints {
   public Response getOrders() {
 
     // Call our controller-layer in order to get the order from the DB
-    ArrayList<Order> orders = OrderController.getOrders();
+    ArrayList<Order> orders = OrderCache.getOrders(false);
+
+    if (orders.size() == 0){
+      return Response.status(200).type(MediaType.TEXT_PLAIN).entity("No orders in the system").build();
+    }
 
     // We convert the java object to json with GSON library imported in Maven
     String json = Encryption.encryptDecryptXOR(new Gson().toJson(orders));
@@ -69,7 +78,7 @@ public class OrderEndpoints {
       return Response.status(200).type(MediaType.APPLICATION_JSON_TYPE).entity(json).build();
     } else {
       // Return a response with status 400 and a message in text
-      return Response.status(400).entity("Could not create order - missing parameters").build();
+      return Response.status(400).entity("Could not create order - missing parameters or parameters which doesn't exist").build();
     }
   }
 }
