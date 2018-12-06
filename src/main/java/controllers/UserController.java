@@ -278,4 +278,25 @@ public class UserController {
     return true;
   }
 
+  public static int getID (String email){
+
+    int id = 0;
+
+    // Check for DB Connection
+    if (dbCon == null) {
+      dbCon = new DatabaseController();
+    }
+    try {
+      ResultSet res = dbCon.query("SELECT id FROM user where email = \'" + email + "\'");
+      if (res.next()){
+        return res.getInt("id");
+      }
+    } catch (SQLException err){
+      err.printStackTrace();
+    }
+
+    return 0;
+
+  }
+
 }

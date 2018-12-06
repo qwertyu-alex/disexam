@@ -3,10 +3,8 @@ package controllers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import model.Address;
-import model.LineItem;
-import model.Order;
-import model.User;
+
+import model.*;
 import utils.Log;
 
 public class OrderController {
@@ -117,7 +115,7 @@ public class OrderController {
   public static Order createOrder(Order order) {
 
     // Write in log that we've reach this step
-    Log.writeLog(OrderController.class.getName(), order, "Actually creating a order in DB", 0);
+    Log.writeLog(OrderController.class.getName(), order, "Actually creating an order in DB", 0);
 
     // Set creation and updated time for order.
     order.setCreatedAt(System.currentTimeMillis() / 1000L);
@@ -133,19 +131,30 @@ public class OrderController {
     order.setShippingAddress(AddressController.createAddress(order.getShippingAddress()));
 
     // Save the user to the database and save them back to initial order instance
-    order.setCustomer(UserController.createUser(order.getCustomer()));
+    if (UserController.getID(order.getCustomer().getEmail()) != 0){
+      order.setCustomer(UserController.getUser(UserController.getID(order.getCustomer().getEmail())));
+    } else {
+      order.setCustomer(UserController.createUser(order.getCustomer()));
+    }
 
-    // TODO: Enable transactions in order for us to not save the order if somethings fails for some of the other inserts. DONE
-    if (order.getCustomer().getId() != 0
-            || order.getBillingAddress().getId() != 0
-            || order.getShippingAddress().getId() != 0
-            || order.calculateOrderTotal() != 0
-            || order.getCreatedAt() != 0
-            || order.getUpdatedAt() != 0){
+    //Store full information about the item && Calculate each lineItem's price from SKU and QUANTITY
+    for (LineItem lineitem:order.getLineItems()) {
+      //Get information from the server and store it in the lineItem
+      Product lineProduct = ProductController.getProductBySku(lineitem.getProduct().getSku());
+      lineitem.setProduct(lineProduct);
+
+      lineitem.setPrice((float)lineitem.getQuantity() * (float)lineProduct.getPrice());
+    }
+
+    // If anything is missing return null
+    if (order.getCustomer() == null
+            || order.getBillingAddress() == null
+            || order.getShippingAddress() == null){
+      System.out.println("Returning");
       return null;
     }
 
-
+    System.out.println("Made it past the check - now inserting into database");
 
     // Insert the product in the DB
     int orderID = dbCon.insert(

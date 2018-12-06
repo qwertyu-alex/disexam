@@ -11,9 +11,7 @@ public class LineItemController {
 
   private static DatabaseController dbCon;
 
-  public LineItemController() {
-    dbCon = new DatabaseController();
-  }
+
 
   public static ArrayList<LineItem> getLineItemsForOrder(int orderID) {
 

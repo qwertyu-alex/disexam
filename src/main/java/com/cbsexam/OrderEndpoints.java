@@ -64,7 +64,18 @@ public class OrderEndpoints {
   public Response createOrder(String body) {
 
     // Read the json from body and transfer it to a order class
+
     Order newOrder = new Gson().fromJson(body, Order.class);
+
+    System.out.println(newOrder.getCustomer().getId());
+    System.out.println(newOrder.getBillingAddress().getId());
+    System.out.println(newOrder.getShippingAddress().getId());
+    System.out.println(newOrder.getCreatedAt());
+    System.out.println(newOrder.getUpdatedAt());
+
+    if  (newOrder == null){
+      return Response.status(400).entity("Wrong order syntax. Please send a json formatted string with correct order syntax").build();
+    }
 
     // Use the controller to add the user
     Order createdOrder = OrderController.createOrder(newOrder);

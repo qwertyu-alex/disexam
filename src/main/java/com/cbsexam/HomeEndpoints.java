@@ -18,18 +18,13 @@ public class HomeEndpoints {
   @Path("/")
   public Response getFrontPage() {
 
-
-    String html = "<HTML><HEAD><TITLE>Hello</TITLE></HEAD><BODY><form action=\"/user\">\n" +
-            "    <input type=\"submit\" value=\"Go to Google\" />\n" +
-            "</form></BODY></HTML>";
+    String html = "";
 
     try {
       html = HTMLReader.readFromHTML();
     } catch (Exception err){
       err.getStackTrace();
     }
-
-    System.out.println(html);
 
     // Return a response with status 200 and JSON as type
     return Response.status(200).type(MediaType.TEXT_HTML_TYPE).entity(html).build();

@@ -1,0 +1,20 @@
+{
+  "DATABASE_HOST" : "ip-172-31-45-39.eu-west-3.compute.internal",
+  "DATABASE_PORT" : 3306,
+  "DATABASE_USERNAME" : "alexa",
+  "DATABASE_PASSWORD" : "Sommer16",
+  "DATABASE_NAME" : "disexam",
+  "ENCRYPTION" : false,
+  "SOLR_HOST" : "35.180.196.164",
+  "SOLR_PORT" : 8983,
+  "SOLR_PATH" : "solr",
+  "SOLR_CORE" : "cbsexam",
+  "PRODUCT_TTL" : 10,
+  "ORDER_TTL" : 10,
+  "USER_TTL" : 10,
+  "REVIEW_TTL" : 10,
+  "ENCR_KEY"  : "lO3%02wfivpf",
+  "ENCR_KEY2" : "t5W7*LSswohYn",
+  "CACHE" : true
+}
+

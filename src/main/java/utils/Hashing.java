@@ -75,6 +75,7 @@ public final class Hashing {
    */
 
   //TODO: DELETE OR MAKE JWT
+  /*
   public static String encryptJSON(String key){
 
     try {
@@ -116,5 +117,5 @@ public final class Hashing {
     }
     return null;
 
-  }
+  }*/
 }

@@ -43,6 +43,7 @@ public class AddressController {
         return address;
       } else {
         System.out.println("No address found");
+        return null;
       }
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
