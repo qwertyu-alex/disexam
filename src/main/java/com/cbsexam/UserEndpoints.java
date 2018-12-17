@@ -27,7 +27,7 @@ public class UserEndpoints {
   public Response getUser(@PathParam("idUser") int idUser) {
 
     // Use the ID to get the user from the controller.
-    User user = UserController.getUser(idUser);
+    User user = UserCache.getUser(idUser);
 
     //If the user wasn't found
     if  (user == null){
@@ -93,7 +93,6 @@ public class UserEndpoints {
 
     //Generate or find an authToken - this returns a token if the user has provided valid credentials and authentication
     String authToken = UserController.authenticateUser(newUser);
-
 
     if (authToken != null){
       //

@@ -42,6 +42,22 @@ public class UserCache {
     // Return the documents
     return users;
   }
+  
+  public static User getUser(int id){
+    for (User user :users) {
+      if (user.getId() == id){
+        return user;
+      }
+    }
+
+    User nonCacheUser = UserController.getUser(id);
+    if ( nonCacheUser != null){
+      users.add(nonCacheUser);
+      return nonCacheUser;
+    }
+
+    return null;
+  }
 
   public static void updateCache(){
     ttl = Config.getUserTtl();

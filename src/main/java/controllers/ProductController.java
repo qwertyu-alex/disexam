@@ -25,10 +25,10 @@ public class ProductController {
     String sql = "SELECT * FROM product where id=" + id;
 
     // Run the query in the DB and make an empty object to return
-    ResultSet rs = dbCon.query(sql);
     Product product = null;
 
     try {
+      ResultSet rs = dbCon.query(sql);
       // Get first row and create the object and return it
       if (rs.next()) {
         product =
@@ -62,10 +62,10 @@ public class ProductController {
 
     String sql = "SELECT * FROM product where sku='" + sku + "'";
 
-    ResultSet rs = dbCon.query(sql);
     Product product = null;
 
     try {
+      ResultSet rs = dbCon.query(sql);
       if (rs.next()) {
         product =
             new Product(
@@ -101,10 +101,10 @@ public class ProductController {
 
     String sql = "SELECT * FROM product";
 
-    ResultSet rs = dbCon.query(sql);
     ArrayList<Product> products = new ArrayList<Product>();
 
     try {
+      ResultSet rs = dbCon.query(sql);
       while (rs.next()) {
         Product product =
             new Product(
@@ -135,32 +135,37 @@ public class ProductController {
       dbCon = new DatabaseController();
     }
 
-    // Insert the product in the DB
-    int productID = dbCon.insert(
-        "INSERT INTO product (product_name, sku, price, description, stock, created_at) VALUES('"
-            + product.getName()
-            + "', '"
-            + product.getSku()
-            + "', "
-            + product.getPrice()
-            + ", '"
-            + product.getDescription()
-            + "', "
-            + product.getStock()
-            + ", "
-            + product.getCreatedTime()
-            + ")");
+    try {
+      // Insert the product in the DB
+      int productID = dbCon.insert(
+              "INSERT INTO product (product_name, sku, price, description, stock, created_at) VALUES('"
+                      + product.getName()
+                      + "', '"
+                      + product.getSku()
+                      + "', "
+                      + product.getPrice()
+                      + ", '"
+                      + product.getDescription()
+                      + "', "
+                      + product.getStock()
+                      + ", "
+                      + product.getCreatedTime()
+                      + ")");
 
-    if (productID != 0) {
-      //Update the productid of the product before returning
-      product.setId(productID);
+      if (productID != 0) {
+        //Update the productid of the product before returning
+        product.setId(productID);
 
-      // Write in log that we've reached this step
-      Log.writeLog(ProductController.class.getName(), product, "Actually creating a product in DB", 0);
+        // Write in log that we've reached this step
+        Log.writeLog(ProductController.class.getName(), product, "Actually creating a product in DB", 0);
 
-    } else{
-      // Return null if product has not been inserted into database
-      return null;
+      } else{
+        // Return null if product has not been inserted into database
+        return null;
+      }
+
+    } catch (SQLException err){
+      err.printStackTrace();
     }
 
     // Return product

@@ -24,10 +24,10 @@ public class AddressController {
     String sql = "SELECT * FROM address where id=" + id;
 
     // Do the query and set the initial value to null
-    ResultSet rs = dbCon.query(sql);
     Address address = null;
 
     try {
+      ResultSet rs = dbCon.query(sql);
       // Get the first row and build an address object
       if (rs.next()) {
         address =
@@ -64,23 +64,27 @@ public class AddressController {
     }
 
     // Insert the product in the DB
-    int addressID = dbCon.insert(
-        "INSERT INTO address(name, city, zipcode, street_address) VALUES('"
-            + address.getName()
-            + "', '"
-            + address.getCity()
-            + "', '"
-            + address.getZipCode()
-            + "', '"
-            + address.getStreetAddress()
-            + "')");
+    try {
+      int addressID = dbCon.insert(
+              "INSERT INTO address(name, city, zipcode, street_address) VALUES('"
+                      + address.getName()
+                      + "', '"
+                      + address.getCity()
+                      + "', '"
+                      + address.getZipCode()
+                      + "', '"
+                      + address.getStreetAddress()
+                      + "')");
 
-    if (addressID != 0) {
-      //Update the productid of the product before returning
-      address.setId(addressID);
-    } else{
-      // Return null if product has not been inserted into database
-      return null;
+      if (addressID != 0) {
+        //Update the productid of the product before returning
+        address.setId(addressID);
+      } else{
+        // Return null if product has not been inserted into database
+        return null;
+      }
+    } catch (SQLException err){
+      err.printStackTrace();
     }
 
     // Return product, will be null at this point

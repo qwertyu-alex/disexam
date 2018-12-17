@@ -26,10 +26,10 @@ public class UserController {
     String sql = "SELECT * FROM user where id=" + id;
 
     // Actually do the query
-    ResultSet rs = dbCon.query(sql);
     User user = null;
 
     try {
+      ResultSet rs = dbCon.query(sql);
       // Get first object, since we only have one
       if (rs.next()) {
         user =
@@ -51,7 +51,7 @@ public class UserController {
     }
 
     // Return null
-    return user;
+    return null;
   }
 
   /**
@@ -70,10 +70,10 @@ public class UserController {
     String sql = "SELECT * FROM user";
 
     // Do the query and initialyze an empty list for use if we don't get results
-    ResultSet rs = dbCon.query(sql);
     ArrayList<User> users = new ArrayList<User>();
 
     try {
+      ResultSet rs = dbCon.query(sql);
       // Loop through DB Data
       while (rs.next()) {
         User user =
@@ -112,31 +112,35 @@ public class UserController {
     //Hash the password with md5
     user.setPassword(Hashing.md5(user.getPassword(), user.getSalt()));
 
-    // Insert the user in the DB
-    int userID = dbCon.insert(
-        "INSERT INTO user(first_name, last_name, password, email, created_at, salt) VALUES('"
-            + user.getFirstname()
-            + "', '"
-            + user.getLastname()
-            + "', '"
-            + user.getPassword()
-            + "', '"
-            + user.getEmail()
-            + "', '"
-            + user.getCreatedTime()
-            + "', '"
-            + user.getSalt()
-            + "')");
+    try {
+      // Insert the user in the DB
+      int userID = dbCon.insert(
+              "INSERT INTO user(first_name, last_name, password, email, created_at, salt) VALUES('"
+                      + user.getFirstname()
+                      + "', '"
+                      + user.getLastname()
+                      + "', '"
+                      + user.getPassword()
+                      + "', '"
+                      + user.getEmail()
+                      + "', '"
+                      + user.getCreatedTime()
+                      + "', '"
+                      + user.getSalt()
+                      + "')");
 
-    if (userID != 0) {
-      //Update the userid of the user before returning
-      user.setId(userID);
+      if (userID != 0) {
+        //Update the userid of the user before returning
+        user.setId(userID);
 
-      // Write in log that we've reach this step
-      Log.writeLog(UserController.class.getName(), user, "Actually creating a user in DB", 0);
-    } else{
-      // Return null if user has not been inserted into database
-      return null;
+        // Write in log that we've reach this step
+        Log.writeLog(UserController.class.getName(), user, "Actually creating a user in DB", 0);
+      } else{
+        // Return null if user has not been inserted into database
+        return null;
+      }
+    } catch (SQLException err){
+      err.printStackTrace();
     }
 
     // Return user

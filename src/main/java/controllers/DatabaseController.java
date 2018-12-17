@@ -12,9 +12,9 @@ import utils.Config;
 
 public class DatabaseController {
 
-  private final long DB_ttl = Config.getDbTtl();
   private Connection connection;
   private long created;
+  private final long DB_ttl = Config.getDbTtl();
 
   public DatabaseController() {
     connection = getConnection();
@@ -27,7 +27,6 @@ public class DatabaseController {
    */
   public Connection getConnection() {
     try {
-
       created = (System.currentTimeMillis() / 1000L);
 
       // Set the dataabase connect with the data from the config
@@ -56,15 +55,18 @@ public class DatabaseController {
     return connection;
   }
 
-  private void checkConnection(){
+  private void checkConnection()throws SQLException{
 
     if (connection == null){
       connection = getConnection();
       System.out.println("connecting");
     }
 
-    if (created > DB_ttl){
-     this.connection = getConnection();
+    if (created > (DB_ttl + created)){
+      System.out.println("Denne kører");
+      connection.close();
+      this.connection = getConnection();
+      System.out.println("connecting");
     }
   }
 
@@ -73,7 +75,7 @@ public class DatabaseController {
    *
    * @return a ResultSet or Null if Empty
    */
-  public ResultSet query(String sql) {
+  public ResultSet query(String sql) throws SQLException{
 
     // Check if we have a connection
     checkConnection();
@@ -81,30 +83,18 @@ public class DatabaseController {
     // We set the resultset as empty.
     ResultSet rs = null;
 
-    try {
-      // Build the statement as a prepared statement
-      PreparedStatement stmt = connection.prepareStatement(sql);
+    // Build the statement as a prepared statement
+    PreparedStatement stmt = connection.prepareStatement(sql);
 
-      // Actually fire the query to the DB
-      rs = stmt.executeQuery();
+    // Actually fire the query to the DB
+    rs = stmt.executeQuery();
 
-      // Return the results
-      return rs;
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
-    } finally {
-      try {
-        connection.close();
-      } catch (SQLException err){
-        err.printStackTrace();
-      }
-    }
+    // Return the results
+    return rs;
 
-    // Return the resultset which at this point will be null
-    return null;
   }
 
-  public int insert(String sql) {
+  public int insert(String sql) throws SQLException{
 
     // Set key to 0 as a start
     int result = 0;
@@ -114,7 +104,7 @@ public class DatabaseController {
 
     System.out.println(sql);
 
-    try {
+
       // Build the statement up in a safe way
       PreparedStatement statement =
           connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -127,15 +117,7 @@ public class DatabaseController {
       if (generatedKeys.next()) {
         return generatedKeys.getInt(1);
       }
-    } catch (SQLException e) {
-      System.out.println(e.getMessage());
-    } finally {
-      try {
-        connection.close();
-      } catch (SQLException err){
-        err.printStackTrace();
-      }
-    }
+
 
     // Return the resultset which at this point will be null
     return result;
@@ -157,12 +139,6 @@ public class DatabaseController {
 
       // Actually fire the query to the DB
       stmt.executeUpdate();
-
-      try {
-        connection.close();
-      } catch (SQLException err){
-        err.printStackTrace();
-      }
 
   }
 

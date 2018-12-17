@@ -11,8 +11,6 @@ public class LineItemController {
 
   private static DatabaseController dbCon;
 
-
-
   public static ArrayList<LineItem> getLineItemsForOrder(int orderID) {
 
     // Check for DB Connection
@@ -24,10 +22,10 @@ public class LineItemController {
     String sql = "SELECT * FROM line_item where order_id=" + orderID;
 
     // Do the query and initialize an empty list for the results
-    ResultSet rs = dbCon.query(sql);
     ArrayList<LineItem> items = new ArrayList<>();
 
     try {
+      ResultSet rs = dbCon.query(sql);
 
       // Loop through the results from the DB
       while (rs.next()) {
@@ -69,25 +67,30 @@ public class LineItemController {
 
     // Update the ID of the product
 
-    // Insert the product in the DB
-    int lineItemID = dbCon.insert(
-        "INSERT INTO line_item(product_id, order_id, price, quantity) VALUES("
-            + lineItem.getProduct().getId()
-            + ", "
-            + orderID
-            + ", "
-            + lineItem.getPrice()
-            + ", "
-            + lineItem.getQuantity()
-            + ")");
 
-    if (lineItemID != 0) {
-      //Update the productid of the product before returning
-      lineItem.setId(lineItemID);
-    } else{
+    try {
+      // Insert the product in the DB
+      int lineItemID = dbCon.insert(
+              "INSERT INTO line_item(product_id, order_id, price, quantity) VALUES("
+                      + lineItem.getProduct().getId()
+                      + ", "
+                      + orderID
+                      + ", "
+                      + lineItem.getPrice()
+                      + ", "
+                      + lineItem.getQuantity()
+                      + ")");
 
-      // Return null if product has not been inserted into database
-      return null;
+      if (lineItemID != 0) {
+        //Update the productid of the product before returning
+        lineItem.setId(lineItemID);
+      } else{
+
+        // Return null if product has not been inserted into database
+        return null;
+      }
+    }catch (SQLException err){
+      err.printStackTrace();
     }
 
     // Return product
