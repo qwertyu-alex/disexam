@@ -6,11 +6,15 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Date;
+
 import utils.Config;
 
 public class DatabaseController {
 
-  private static Connection connection;
+  private final long DB_ttl = Config.getDbTtl();
+  private Connection connection;
+  private long created;
 
   public DatabaseController() {
     connection = getConnection();
@@ -21,8 +25,11 @@ public class DatabaseController {
    *
    * @return a Connection object
    */
-  public static Connection getConnection() {
+  public Connection getConnection() {
     try {
+
+      created = (System.currentTimeMillis() / 1000L);
+
       // Set the dataabase connect with the data from the config
       String url =
           "jdbc:mysql://"
@@ -49,6 +56,18 @@ public class DatabaseController {
     return connection;
   }
 
+  private void checkConnection(){
+
+    if (connection == null){
+      connection = getConnection();
+      System.out.println("connecting");
+    }
+
+    if (created > DB_ttl){
+     this.connection = getConnection();
+    }
+  }
+
   /**
    * Do a query in the database
    *
@@ -57,9 +76,7 @@ public class DatabaseController {
   public ResultSet query(String sql) {
 
     // Check if we have a connection
-    if (connection == null)
-      connection = getConnection();
-
+    checkConnection();
 
     // We set the resultset as empty.
     ResultSet rs = null;
@@ -75,10 +92,16 @@ public class DatabaseController {
       return rs;
     } catch (SQLException e) {
       System.out.println(e.getMessage());
+    } finally {
+      try {
+        connection.close();
+      } catch (SQLException err){
+        err.printStackTrace();
+      }
     }
 
     // Return the resultset which at this point will be null
-    return rs;
+    return null;
   }
 
   public int insert(String sql) {
@@ -86,9 +109,8 @@ public class DatabaseController {
     // Set key to 0 as a start
     int result = 0;
 
-    // Check that we have connection
-    if (connection == null)
-      connection = getConnection();
+    // Check if we have a connection
+    checkConnection();
 
     System.out.println(sql);
 
@@ -107,6 +129,12 @@ public class DatabaseController {
       }
     } catch (SQLException e) {
       System.out.println(e.getMessage());
+    } finally {
+      try {
+        connection.close();
+      } catch (SQLException err){
+        err.printStackTrace();
+      }
     }
 
     // Return the resultset which at this point will be null
@@ -122,14 +150,19 @@ public class DatabaseController {
   public void update (String sql) throws SQLException{
 
     // Check if we have a connection
-    if (connection == null)
-      connection = getConnection();
+    checkConnection();
 
       // Build the statement as a prepared statement
       PreparedStatement stmt = connection.prepareStatement(sql);
 
       // Actually fire the query to the DB
       stmt.executeUpdate();
+
+      try {
+        connection.close();
+      } catch (SQLException err){
+        err.printStackTrace();
+      }
 
   }
 

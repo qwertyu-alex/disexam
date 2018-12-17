@@ -15,10 +15,6 @@ public class UserController {
 
   private static DatabaseController dbCon;
 
-  public UserController() {
-    dbCon = new DatabaseController();
-  }
-
   public static User getUser(int id) {
 
     // Check for connection

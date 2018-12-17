@@ -23,6 +23,7 @@ public final class Config {
   private static long ORDER_TTL;
   private static long USER_TTL;
   private static long REVIEW_TTL;
+  private static long DB_TTL;
   private static String ENCR_KEY;
   private static String ENCR_KEY2;
   private static boolean CACHE;
@@ -92,6 +93,10 @@ public final class Config {
     return CACHE;
   }
 
+  public static long getDbTtl() {
+    return DB_TTL;
+  }
+
   public static void initializeConfig() throws IOException {
 
     // Init variables to parse JSON
@@ -134,6 +139,7 @@ public final class Config {
     ORDER_TTL = json.get("ORDER_TTL").getAsLong();
     USER_TTL = json.get("USER_TTL").getAsLong();
     REVIEW_TTL = json.get("REVIEW_TTL").getAsLong();
+    DB_TTL = json.get("DB_TTL").getAsLong();
 
     CACHE = json.get("CACHE").getAsBoolean();
 
