@@ -26,7 +26,7 @@ public class ProductEndpoints {
   public Response getProduct(@PathParam("idProduct") int idProduct) {
 
     // Call our controller-layer in order to get the order from the DB
-    Product product = ProductController.getProduct(idProduct);
+    Product product = ProductCache.getProduct(idProduct);
 
     // We convert the java object to json with GSON library imported in Maven
     String json = Encryption.encryptDecryptXOR(new Gson().toJson(product));

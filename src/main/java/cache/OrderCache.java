@@ -43,4 +43,21 @@ public class OrderCache {
         // Return the documents
         return orders;
     }
+
+    static public Order getOrder (int id){
+        for (Order order : orders) {
+            if (order.getId() == id) {
+                return order;
+            }
+        }
+
+        Order noncache = OrderController.getOrder(id);
+        if (noncache != null){
+            orders.add(noncache);
+            return noncache;
+        }
+
+        return null;
+    }
+
 }

@@ -42,4 +42,21 @@ public class ProductCache {
     // Return the documents
     return products;
   }
+
+  public static Product getProduct(int id){
+
+    for (Product product : products) {
+      if (id == product.getId()){
+        return product;
+      }
+    }
+
+    Product noncache = ProductController.getProduct(id);
+    if (noncache != null){
+      products.add(noncache);
+      return noncache;
+    }
+
+    return null;
+  }
 }
