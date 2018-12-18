@@ -136,16 +136,18 @@ public class UserController {
 
         // Write in log that we've reach this step
         Log.writeLog(UserController.class.getName(), user, "Actually creating a user in DB", 0);
+        return user;
       } else{
         // Return null if user has not been inserted into database
         return null;
       }
+
     } catch (SQLException err){
       err.printStackTrace();
     }
 
-    // Return user
-    return user;
+    // Return null if error has been thrown
+    return null;
   }
 
   public static String authenticateUser (User user){
