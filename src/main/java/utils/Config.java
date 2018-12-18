@@ -24,6 +24,7 @@ public final class Config {
   private static long USER_TTL;
   private static long REVIEW_TTL;
   private static long DB_TTL;
+  private static long AUTH_TTL;
   private static String ENCR_KEY;
   private static String ENCR_KEY2;
   private static boolean CACHE;
@@ -97,6 +98,10 @@ public final class Config {
     return DB_TTL;
   }
 
+  public static long getAuthTtl() {
+    return AUTH_TTL;
+  }
+
   public static void initializeConfig() throws IOException {
 
     // Init variables to parse JSON
@@ -140,6 +145,7 @@ public final class Config {
     USER_TTL = json.get("USER_TTL").getAsLong();
     REVIEW_TTL = json.get("REVIEW_TTL").getAsLong();
     DB_TTL = json.get("DB_TTL").getAsLong();
+    AUTH_TTL = json.get("AUTH_TTL").getAsLong();
 
     CACHE = json.get("CACHE").getAsBoolean();
 

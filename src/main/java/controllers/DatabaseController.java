@@ -81,7 +81,7 @@ public class DatabaseController {
     checkConnection();
 
     // We set the resultset as empty.
-    ResultSet rs = null;
+    ResultSet rs;
 
     // Build the statement as a prepared statement
     PreparedStatement stmt = connection.prepareStatement(sql);

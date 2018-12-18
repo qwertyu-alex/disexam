@@ -171,7 +171,7 @@ public class OrderController {
       Product lineProduct = ProductController.getProductBySku(lineitem.getProduct().getSku());
       lineitem.setProduct(lineProduct);
 
-      lineitem.setPrice((float)lineitem.getQuantity() * (float)lineProduct.getPrice());
+      lineitem.setPrice((float)lineitem.getQuantity() * lineProduct.getPrice());
     }
 
     // If anything is missing return null
@@ -208,7 +208,7 @@ public class OrderController {
       }
 
       // Create an empty list in order to go trough items and then save them back with ID
-      ArrayList<LineItem> items = new ArrayList<LineItem>();
+      ArrayList<LineItem> items = new ArrayList<>();
 
       // Save line items to database
       for(LineItem item : order.getLineItems()){

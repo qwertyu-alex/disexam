@@ -8,6 +8,7 @@ import java.util.Random;
 
 import cache.UserCache;
 import model.User;
+import utils.Config;
 import utils.Hashing;
 import utils.Log;
 
@@ -57,7 +58,7 @@ public class UserController {
   /**
    * Get all users in database
    *
-   * @return
+   * @return En arraylist af users
    */
   public static ArrayList<User> getUsers() {
 
@@ -70,7 +71,7 @@ public class UserController {
     String sql = "SELECT * FROM user";
 
     // Do the query and initialyze an empty list for use if we don't get results
-    ArrayList<User> users = new ArrayList<User>();
+    ArrayList<User> users = new ArrayList<>();
 
     try {
       ResultSet rs = dbCon.query(sql);
@@ -163,7 +164,9 @@ public class UserController {
       try {
         ResultSet res = dbCon.query("SELECT * FROM user WHERE authToken = \'" + user.getAuthToken() + "\' AND email = \'" + user.getEmail() + "\'");
         if (res.next()){
-          return res.getString("authToken");
+          if (res.getLong("lastlogin") < Config.getAuthTtl() + System.currentTimeMillis() / 1000L){
+            return res.getString("authToken");
+          }
         }
       } catch (SQLException err){
         err.printStackTrace();
@@ -200,7 +203,8 @@ public class UserController {
       newAuthToken = Hashing.sha(new Date().toString(), Double.toString(new Random().nextDouble()));
       try {
         dbCon.update("UPDATE user SET " +
-                "authtoken = \'" + newAuthToken + "\' " +
+                "authtoken = \'" + newAuthToken + "\'," +
+                "lastlogin = " + System.currentTimeMillis() / 1000L + " " +
                 "WHERE id = \'" + id + "\'");
         return newAuthToken;
       } catch (SQLException err){
@@ -237,7 +241,6 @@ public class UserController {
 
   public static boolean updateUser (User user){
     String query = "";
-
 
     // Check for DB Connection
     if (dbCon == null) {
@@ -281,8 +284,6 @@ public class UserController {
   }
 
   public static int getID (String email){
-
-    int id = 0;
 
     // Check for DB Connection
     if (dbCon == null) {

@@ -18,7 +18,7 @@ import utils.Encryption;
 public class ProductEndpoints {
 
   /**
-   * @param idProduct
+   * @param idProduct Tager imod en integer
    * @return Responses
    */
   @GET
