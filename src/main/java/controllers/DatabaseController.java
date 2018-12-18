@@ -109,8 +109,11 @@ public class DatabaseController {
       PreparedStatement statement =
           connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 
-      // Execute query
-      result = statement.executeUpdate();
+
+        // Execute query
+        result = statement.executeUpdate();
+
+
 
       // Get our key back in order to update the user
       ResultSet generatedKeys = statement.getGeneratedKeys();

@@ -12,6 +12,8 @@ import utils.Config;
 import utils.Hashing;
 import utils.Log;
 
+import javax.xml.bind.SchemaOutputResolver;
+
 public class UserController {
 
   private static DatabaseController dbCon;
@@ -113,6 +115,11 @@ public class UserController {
     //Hash the password with md5
     user.setPassword(Hashing.md5(user.getPassword(), user.getSalt()));
 
+    //Check if email exists
+    if (getID(user.getEmail()) != 0){
+      return null;
+    }
+
     try {
       // Insert the user in the DB
       int userID = dbCon.insert(
@@ -166,7 +173,7 @@ public class UserController {
       try {
         ResultSet res = dbCon.query("SELECT * FROM user WHERE authToken = \'" + user.getAuthToken() + "\' AND email = \'" + user.getEmail() + "\'");
         if (res.next()){
-          if (res.getLong("lastlogin") < Config.getAuthTtl() + System.currentTimeMillis() / 1000L){
+          if (res.getLong("lastlogin") < (Config.getAuthTtl() + System.currentTimeMillis() / 1000L)){
             return res.getString("authToken");
           }
         }
