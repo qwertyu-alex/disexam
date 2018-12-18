@@ -1,14 +1,5 @@
 package utils;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-
-import java.util.Date;
-
 public final class Encryption {
 
   public static String encryptDecryptXOR(String rawString) {
@@ -17,18 +8,16 @@ public final class Encryption {
     if (Config.getEncryption()) {
 
       //Change the keys depending on the length of the rawString
-      String keyMod = Integer.toString(rawString.length() % 11);
-      String keyMod2 = Integer.toString(rawString.length() % 3);
-      System.out.println(keyMod);
+      int keyMod = (rawString.length() % 11);
+      int keyMod2 = (rawString.length() % 3);
 
-      char[] key = (keyMod + Config.getEncrKey()).toCharArray();
-      char[] key2 = (keyMod2 + Config.getEncrKey2()).toCharArray();
+      char[] key = caesarCipher(Config.getEncrKey(), keyMod);
+      char[] key2 = caesarCipher (Config.getEncrKey2(),keyMod2);
 
       // Stringbuilder enables you to play around with strings and make useful stuff
       StringBuilder thisIsEncrypted = new StringBuilder();
       StringBuilder thisIsEncryptedTwice = new StringBuilder();
 
-      // TODO: This is where the magic of XOR is happening. Are you able to explain what is going on?
       for (int i = 0; i < rawString.length(); i++) {
         thisIsEncrypted.append((char) (rawString.charAt(i) ^ key[i % key.length]));
       }
@@ -47,6 +36,28 @@ public final class Encryption {
       // We return without having done anything
       return rawString;
     }
+  }
+
+
+  /**
+   *
+   * @param key Nøglen som skal bruges til at enkryptere
+   * @param shifts Hvor meget hver char skal rykkes
+   * @return En ny nøgle som kan bruges
+   */
+  private static char[] caesarCipher(String key, int shifts){
+    StringBuilder keyBuild = new StringBuilder();
+    for (int i = 0; i < key.length(); i++){
+      char c =  (char)(Config.getEncrKey().charAt(i) + shifts);
+      if (c > 'z'){
+        keyBuild.append((char)(Config.getEncrKey().charAt(i) - (26-shifts)));
+      } else {
+        keyBuild.append((char)(Config.getEncrKey().charAt(i) + (shifts)));
+      }
+    }
+
+    return keyBuild.toString().toCharArray();
+
   }
 
 }

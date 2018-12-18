@@ -34,17 +34,27 @@ public class OrderController {
                     "WHERE order_id = " + id;
 
 
-    // Do the query in the database and create an empty object for the results
-    Order order = null;
-
     try {
       ResultSet rs = dbCon.query(sql);
-      rs.next();
+      if (rs.next()){
+        return orderFactory(id, rs);
+      }
 
-      //Create a new user
+    } catch (SQLException err){
+      err.printStackTrace();
+    }
+
+    // Returns null
+    return null;
+  }
+
+
+  private static Order orderFactory(int orderID, ResultSet rs) throws SQLException{
+
       User user = new User();
       user.setId(rs.getInt("user.id"));
-      user.setFirstname(rs.getString("user.firstname"));
+      user.setFirstname(rs.getString("user.first_name"));
+      user.setLastname(rs.getString("user.last_name"));
       user.setPassword(rs.getString("user.password"));
       user.setEmail(rs.getString("user.email"));
       user.setSalt(rs.getString("user.salt"));
@@ -52,17 +62,18 @@ public class OrderController {
       Address billingAddress = new Address();
       billingAddress.setId(rs.getInt("billing_address.id"));
       billingAddress.setName(rs.getString("billing_address.name"));
-      billingAddress.setStreetAddress(rs.getString("billingAddress.street_address"));
-      billingAddress.setCity(rs.getString("billingAddress.city"));
-      billingAddress.setZipCode(rs.getString("billingAddress.zipcode"));
+      billingAddress.setStreetAddress(rs.getString("billing_address.street_address"));
+      billingAddress.setCity(rs.getString("billing_address.city"));
+      billingAddress.setZipCode(rs.getString("billing_address.zipcode"));
 
       Address shippingAddress = new Address();
       shippingAddress.setId(rs.getInt("shipping_address.id"));
       shippingAddress.setName(rs.getString("shipping_address.name"));
-      shippingAddress.setStreetAddress(rs.getString("shippingAddress.street_address"));
-      shippingAddress.setCity(rs.getString("shippingAddress.city"));
-      shippingAddress.setZipCode(rs.getString("shippingAddress.zipcode"));
+      shippingAddress.setStreetAddress(rs.getString("shipping_address.street_address"));
+      shippingAddress.setCity(rs.getString("shipping_address.city"));
+      shippingAddress.setZipCode(rs.getString("shipping_address.zipcode"));
 
+      //Test purposes ______
 //      User user = UserController.getUser(rs.getInt("user_id"));
 //      ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
 //      Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
@@ -70,44 +81,47 @@ public class OrderController {
 
       ArrayList<LineItem> lineItems = new ArrayList<>();
 
-
       do {
-        lineItems.add(new LineItem(rs.getInt("line_item.id"),
-                new Product(
-                        rs.getInt("product.id"),
-                        rs.getString("product.product_name"),
-                        rs.getString("product.sku"),
-                        rs.getFloat("product.price"),
-                        rs.getString("product.description"),
-                        rs.getInt("product.stock"),
-                        rs.getInt("product.created_at")),
-                rs.getInt("line_item.quantity"),
-                rs.getFloat("line_item.price")
-        ));
+
+        if (orderID == rs.getInt("orders.id")){
+          lineItems.add(new LineItem(rs.getInt("line_item.id"),
+                  new Product(
+                          rs.getInt("product.id"),
+                          rs.getString("product.product_name"),
+                          rs.getString("product.sku"),
+                          rs.getFloat("product.price"),
+                          rs.getString("product.description"),
+                          rs.getInt("product.stock"),
+                          rs.getInt("product.created_at")),
+                  rs.getInt("line_item.quantity"),
+                  rs.getFloat("line_item.price")
+          ));
+        } else {
+          break;
+        }
+
       } while (rs.next());
 
+
+      //Go back to the pointer before
+      rs.previous();
       // Create an object instance of order from the database dataa
-      order =
-          new Order(
-              rs.getInt("orders.id"),
-              user,
-              lineItems,
-              billingAddress,
-              shippingAddress,
-              rs.getFloat("orders.order_total"),
-              rs.getLong("orders.created_at"),
-              rs.getLong("orders.updated_at"));
+       Order order =
+              new Order(
+                      rs.getInt("orders.id"),
+                      user,
+                      lineItems,
+                      billingAddress,
+                      shippingAddress,
+                      rs.getFloat("orders.order_total"),
+                      rs.getLong("orders.created_at"),
+                      rs.getLong("orders.updated_at"));
 
       // Returns the build order
       return order;
 
-    } catch (SQLException ex) {
-      System.out.println(ex.getMessage());
-    }
-
-    // Returns null
-    return order;
   }
+
 
   /**
    * Get all orders in database
@@ -120,7 +134,14 @@ public class OrderController {
       dbCon = new DatabaseController();
     }
 
-    String sql = "SELECT * FROM orders";
+    String sql =
+            "SELECT *\n" +
+                    "FROM orders\n" +
+                    "  INNER JOIN user on user.id = orders.user_id\n" +
+                    "  INNER JOIN address as billing_address ON orders.billing_address_id = billing_address.id\n" +
+                    "  INNER JOIN address as shipping_address ON orders.shipping_address_id = shipping_address.id\n" +
+                    "  INNER JOIN line_item ON orders.id = line_item.order_id\n" +
+                    "  INNER JOIN product ON line_item.product_id = product.id";
 
     ArrayList<Order> orders = new ArrayList<Order>();
 
@@ -129,8 +150,8 @@ public class OrderController {
       while(rs.next()) {
 
         // Add order to our list
-        orders.add(getOrder(rs.getInt("order.id")));
-
+        orders.add(orderFactory(rs.getInt("orders.id"),rs));
+        System.out.println("Added");
       }
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
