@@ -44,6 +44,12 @@ public class UserCache {
   }
   
   public static User getUser(int id){
+
+    //If cache is disabled -> get data from database
+    if (!Config.getCache()){
+      return UserController.getUser(id);
+    }
+
     for (User user :users) {
       if (user.getId() == id){
         return user;

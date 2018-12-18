@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import cache.UserCache;
 import model.*;
 import utils.Log;
 
@@ -24,38 +23,84 @@ public class OrderController {
     }
 
     // Build SQL string to query
-    String sql = "SELECT * FROM orders where id=" + id;
+    String sql =
+            "SELECT *\n" +
+                    "FROM orders\n" +
+                    "  INNER JOIN user on user.id = orders.user_id\n" +
+                    "  INNER JOIN address as billing_address ON orders.billing_address_id = billing_address.id\n" +
+                    "  INNER JOIN address as shipping_address ON orders.shipping_address_id = shipping_address.id\n" +
+                    "  INNER JOIN line_item ON orders.id = line_item.order_id\n" +
+                    "  INNER JOIN product ON line_item.product_id = product.id\n" +
+                    "WHERE order_id = " + id;
+
 
     // Do the query in the database and create an empty object for the results
     Order order = null;
 
     try {
       ResultSet rs = dbCon.query(sql);
-      if (rs.next()) {
+      rs.next();
 
-        // Perhaps we could optimize things a bit here and get rid of nested queries.
-        User user = UserController.getUser(rs.getInt("user_id"));
-        ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-        Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
-        Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
+      //Create a new user
+      User user = new User();
+      user.setId(rs.getInt("user.id"));
+      user.setFirstname(rs.getString("user.firstname"));
+      user.setPassword(rs.getString("user.password"));
+      user.setEmail(rs.getString("user.email"));
+      user.setSalt(rs.getString("user.salt"));
 
-        // Create an object instance of order from the database dataa
-        order =
-            new Order(
-                rs.getInt("id"),
-                user,
-                lineItems,
-                billingAddress,
-                shippingAddress,
-                rs.getFloat("order_total"),
-                rs.getLong("created_at"),
-                rs.getLong("updated_at"));
+      Address billingAddress = new Address();
+      billingAddress.setId(rs.getInt("billing_address.id"));
+      billingAddress.setName(rs.getString("billing_address.name"));
+      billingAddress.setStreetAddress(rs.getString("billingAddress.street_address"));
+      billingAddress.setCity(rs.getString("billingAddress.city"));
+      billingAddress.setZipCode(rs.getString("billingAddress.zipcode"));
 
-        // Returns the build order
-        return order;
-      } else {
-        System.out.println("No order found");
-      }
+      Address shippingAddress = new Address();
+      shippingAddress.setId(rs.getInt("shipping_address.id"));
+      shippingAddress.setName(rs.getString("shipping_address.name"));
+      shippingAddress.setStreetAddress(rs.getString("shippingAddress.street_address"));
+      shippingAddress.setCity(rs.getString("shippingAddress.city"));
+      shippingAddress.setZipCode(rs.getString("shippingAddress.zipcode"));
+
+//      User user = UserController.getUser(rs.getInt("user_id"));
+//      ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
+//      Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
+//      Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
+
+      ArrayList<LineItem> lineItems = new ArrayList<>();
+
+
+      do {
+        lineItems.add(new LineItem(rs.getInt("line_item.id"),
+                new Product(
+                        rs.getInt("product.id"),
+                        rs.getString("product.product_name"),
+                        rs.getString("product.sku"),
+                        rs.getFloat("product.price"),
+                        rs.getString("product.description"),
+                        rs.getInt("product.stock"),
+                        rs.getInt("product.created_at")),
+                rs.getInt("line_item.quantity"),
+                rs.getFloat("line_item.price")
+        ));
+      } while (rs.next());
+
+      // Create an object instance of order from the database dataa
+      order =
+          new Order(
+              rs.getInt("orders.id"),
+              user,
+              lineItems,
+              billingAddress,
+              shippingAddress,
+              rs.getFloat("orders.order_total"),
+              rs.getLong("orders.created_at"),
+              rs.getLong("orders.updated_at"));
+
+      // Returns the build order
+      return order;
+
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
     }
@@ -83,26 +128,8 @@ public class OrderController {
       ResultSet rs = dbCon.query(sql);
       while(rs.next()) {
 
-        // Perhaps we could optimize things a bit here and get rid of nested queries.
-        User user = UserCache.getUser(rs.getInt("user_id"));
-        ArrayList<LineItem> lineItems = LineItemController.getLineItemsForOrder(rs.getInt("id"));
-        Address billingAddress = AddressController.getAddress(rs.getInt("billing_address_id"));
-        Address shippingAddress = AddressController.getAddress(rs.getInt("shipping_address_id"));
-
-        // Create an order from the database data
-        Order order =
-            new Order(
-                rs.getInt("id"),
-                user,
-                lineItems,
-                billingAddress,
-                shippingAddress,
-                rs.getFloat("order_total"),
-                rs.getLong("created_at"),
-                rs.getLong("updated_at"));
-
         // Add order to our list
-        orders.add(order);
+        orders.add(getOrder(rs.getInt("order.id")));
 
       }
     } catch (SQLException ex) {

@@ -45,19 +45,25 @@ public class OrderCache {
     }
 
     static public Order getOrder (int id){
-        for (Order order : orders) {
-            if (order.getId() == id) {
-                return order;
-            }
-        }
+      //If cache is disabled -> get data from database
+      if (!Config.getCache()){
+        return OrderController.getOrder(id);
+      }
 
-        Order noncache = OrderController.getOrder(id);
-        if (noncache != null){
-            orders.add(noncache);
-            return noncache;
-        }
 
-        return null;
+      for (Order order : orders) {
+          if (order.getId() == id) {
+              return order;
+          }
+      }
+
+      Order noncache = OrderController.getOrder(id);
+      if (noncache != null){
+          orders.add(noncache);
+          return noncache;
+      }
+
+      return null;
     }
 
 }

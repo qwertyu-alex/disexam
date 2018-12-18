@@ -196,14 +196,16 @@ public class UserController {
     }
 
     //Generate new authToken from current date and a random double
-    newAuthToken = Hashing.sha(new Date().toString(), Double.toString(new Random().nextDouble()));
-    try {
-      dbCon.update("UPDATE user SET " +
-              "authtoken = \'" + newAuthToken + "\' " +
-              "WHERE id = \'" + id + "\'");
-      return newAuthToken;
-    } catch (SQLException err){
-      err.printStackTrace();
+    if (id != 0){
+      newAuthToken = Hashing.sha(new Date().toString(), Double.toString(new Random().nextDouble()));
+      try {
+        dbCon.update("UPDATE user SET " +
+                "authtoken = \'" + newAuthToken + "\' " +
+                "WHERE id = \'" + id + "\'");
+        return newAuthToken;
+      } catch (SQLException err){
+        err.printStackTrace();
+      }
     }
 
     //If there are no existing users matching

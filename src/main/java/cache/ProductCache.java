@@ -45,6 +45,10 @@ public class ProductCache {
 
   public static Product getProduct(int id){
 
+    if (!Config.getCache()){
+      return ProductController.getProduct(id);
+    }
+
     for (Product product : products) {
       if (id == product.getId()){
         return product;
