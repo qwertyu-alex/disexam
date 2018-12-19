@@ -88,7 +88,7 @@ public class AddressController {
     }
 
     // Return product, will be null at this point
-    return address;
+    return null;
   }
   
 }

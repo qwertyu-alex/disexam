@@ -105,7 +105,7 @@ public class OrderController {
 
       //Go back to the pointer before
       rs.previous();
-      // Create an object instance of order from the database dataa
+      // Create an object instance of order from the database data
        Order order =
               new Order(
                       rs.getInt("orders.id"),
@@ -162,6 +162,13 @@ public class OrderController {
   }
 
   public static Order createOrder(Order order) {
+    // If anything is missing return null
+    if (order.getCustomer() == null
+            || order.getBillingAddress() == null
+            || order.getShippingAddress() == null){
+      System.out.println("Returning");
+      return null;
+    }
 
     // Write in log that we've reach this step
     Log.writeLog(OrderController.class.getName(), order, "Actually creating an order in DB", 0);
@@ -188,25 +195,14 @@ public class OrderController {
 
     //Store full information about the item && Calculate each lineItem's price from SKU and QUANTITY
     for (LineItem lineitem:order.getLineItems()) {
-      //Get information from the server and store it in the lineItem
+      //Get information from the DB and store it in the lineItem
       Product lineProduct = ProductController.getProductBySku(lineitem.getProduct().getSku());
       lineitem.setProduct(lineProduct);
-
       lineitem.setPrice((float)lineitem.getQuantity() * lineProduct.getPrice());
     }
 
-    // If anything is missing return null
-    if (order.getCustomer() == null
-            || order.getBillingAddress() == null
-            || order.getShippingAddress() == null){
-      System.out.println("Returning");
-      return null;
-    }
-
-    System.out.println("Made it past the check - now inserting into database");
 
     try {
-
       // Insert the product in the DB
       int orderID = dbCon.insert(
               "INSERT INTO orders(user_id, billing_address_id, shipping_address_id, order_total, created_at, updated_at) VALUES("

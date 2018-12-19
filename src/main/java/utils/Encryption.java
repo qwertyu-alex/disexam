@@ -48,16 +48,14 @@ public final class Encryption {
   private static char[] caesarCipher(String key, int shifts){
     StringBuilder keyBuild = new StringBuilder();
     for (int i = 0; i < key.length(); i++){
-      char c =  (char)(Config.getEncrKey().charAt(i) + shifts);
+      char c =  (char)(key.charAt(i) + shifts);
       if (c > 'z'){
-        keyBuild.append((char)(Config.getEncrKey().charAt(i) - (26-shifts)));
+        keyBuild.append((char)(key.charAt(i) - (26-shifts)));
       } else {
-        keyBuild.append((char)(Config.getEncrKey().charAt(i) + (shifts)));
+        keyBuild.append((char)(key.charAt(i) + (shifts)));
       }
     }
 
     return keyBuild.toString().toCharArray();
-
   }
-
 }

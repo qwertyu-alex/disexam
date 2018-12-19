@@ -6,7 +6,6 @@ import utils.Config;
 
 import java.util.ArrayList;
 
-//TODO: Build this cache and use it.
 public class OrderCache {
 
     // List of orders

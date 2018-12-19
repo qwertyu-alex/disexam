@@ -14,6 +14,7 @@
   "USER_TTL" : 10,
   "REVIEW_TTL" : 10,
   "DB_TTL" : 600,
+  "AUTH_TTL" : 600,
   "ENCR_KEY"  : "lO3%02wfivpf",
   "ENCR_KEY2" : "t5W7*LSswohYn",
   "CACHE" : true
