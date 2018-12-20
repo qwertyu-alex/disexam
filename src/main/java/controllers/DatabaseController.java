@@ -14,10 +14,11 @@ public class DatabaseController {
 
   private Connection connection;
   private long created;
-  private final long DB_ttl = Config.getDbTtl();
+  private final long DB_ttl;
 
   public DatabaseController() {
     connection = getConnection();
+    DB_ttl = Config.getDbTtl();
   }
 
   /**
@@ -28,6 +29,8 @@ public class DatabaseController {
   public Connection getConnection() {
     try {
       created = (System.currentTimeMillis() / 1000L);
+      System.out.println("Getting DB connection");
+
 
       // Set the dataabase connect with the data from the config
       String url =
@@ -59,14 +62,11 @@ public class DatabaseController {
 
     if (connection == null){
       connection = getConnection();
-      System.out.println("connecting");
     }
 
-    if (created > (DB_ttl + created)){
-      System.out.println("Denne kører");
+    if (System.currentTimeMillis()/1000L >= (DB_ttl + created)){
       connection.close();
       this.connection = getConnection();
-      System.out.println("connecting");
     }
   }
 
@@ -91,7 +91,6 @@ public class DatabaseController {
 
     // Return the results
     return rs;
-
   }
 
   public int insert(String sql) throws SQLException{
@@ -121,11 +120,9 @@ public class DatabaseController {
         return generatedKeys.getInt(1);
       }
 
-
     // Return the resultset which at this point will be null
     return result;
   }
-
 
   /**
    * A method which sends an update to the database.
