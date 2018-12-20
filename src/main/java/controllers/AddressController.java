@@ -78,7 +78,9 @@ public class AddressController {
 
       if (addressID != 0) {
         //Update the productid of the product before returning
+        System.out.println("Giving id " + addressID);
         address.setId(addressID);
+        return address;
       } else{
         // Return null if product has not been inserted into database
         return null;
