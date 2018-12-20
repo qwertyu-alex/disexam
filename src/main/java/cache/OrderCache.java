@@ -28,7 +28,7 @@ public class OrderCache {
         // Otherwise we look at the age of the cache and figure out if we should update.
         // If the list is empty we also check for new orders
         if (forceUpdate
-                || ((created + ttl) >= (System.currentTimeMillis() / 1000L))
+                || ((created + ttl) <= (System.currentTimeMillis() / 1000L))
                 || orders.isEmpty()) {
             System.out.println("Updating Order Cache");
             // Get orders from controller, since we wish to update.

@@ -151,7 +151,6 @@ public class OrderController {
 
         // Add order to our list
         orders.add(orderFactory(rs.getInt("orders.id"),rs));
-        System.out.println("Added");
       }
     } catch (SQLException ex) {
       System.out.println(ex.getMessage());
